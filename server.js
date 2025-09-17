@@ -2,7 +2,7 @@ const { addon } = require("./index.js");
 const { parseConfig } = require("./lib/utils");
 const { initializeBuffering } = require("./lib/bufferCatalogs");
 const config = parseConfig("{}"); //load default config
-const PORT = process.env.PORT || 7000;
+const PORT = process.env.PORT || 5600;
 const isDevelopment = process.argv.includes("--dev");
 const buffer = process.argv.includes("--buffer");
 

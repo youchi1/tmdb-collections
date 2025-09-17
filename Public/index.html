@@ -231,6 +231,15 @@
         transform: translateX(26px);
       }
       
+      input:disabled + .slider {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      
+      input:disabled + .slider:before {
+        opacity: 0.8;
+      }
+      
       .catalog-list {
         width: 100%;
         margin-top: 1rem;
@@ -430,7 +439,7 @@
         </div>
         
         <div class="config-option">
-          <label for="enableCollectionFromMovie">Discover and open collection from movie details page</label>
+          <label for="enableCollectionFromMovie">Discover and open collections from movie details page</label>
           <label class="toggle-switch">
             <input type="checkbox" id="enableCollectionFromMovie" checked>
             <span class="slider"></span>
@@ -479,6 +488,24 @@
               </label>
             </div>
           </div>
+          <div class="catalog-item" data-id="newReleases">
+            <div class="catalog-item-handle">☰</div>
+            <div class="catalog-item-name">New Releases</div>
+            <div class="catalog-toggle">
+              <span>Enabled</span>
+              <label class="toggle-switch">
+                <input type="checkbox" checked class="catalog-checkbox" id="catalog-newReleases" title="Enable New Releases catalog">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="catalog-toggle">
+              <span>Discover only</span>
+              <label class="toggle-switch" title="Show in Discover only">
+                <input type="checkbox" class="catalog-discover-only" id="catalog-newReleases-discover" title="Show in Discover only">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
           <div class="catalog-item" data-id="topRated">
             <div class="catalog-item-handle">☰</div>
             <div class="catalog-item-name">Top Rated</div>
@@ -497,20 +524,38 @@
               </label>
             </div>
           </div>
-          <div class="catalog-item" data-id="newReleases">
+          <div class="catalog-item" data-id="topRatedByCountry">
             <div class="catalog-item-handle">☰</div>
-            <div class="catalog-item-name">New Releases</div>
+            <div class="catalog-item-name">Top Rated By Country</div>
             <div class="catalog-toggle">
               <span>Enabled</span>
               <label class="toggle-switch">
-                <input type="checkbox" checked class="catalog-checkbox" id="catalog-newReleases" title="Enable New Releases catalog">
+                <input type="checkbox" class="catalog-checkbox" id="catalog-topRatedByCountry" title="Enable Top Rated By Country catalog">
                 <span class="slider"></span>
               </label>
             </div>
             <div class="catalog-toggle">
               <span>Discover only</span>
               <label class="toggle-switch" title="Show in Discover only">
-                <input type="checkbox" class="catalog-discover-only" id="catalog-newReleases-discover" title="Show in Discover only">
+                <input type="checkbox" class="catalog-discover-only" id="catalog-topRatedByCountry-discover" title="Show in Discover only" checked disabled>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          <div class="catalog-item" data-id="topRatedByCompany">
+            <div class="catalog-item-handle">☰</div>
+            <div class="catalog-item-name">Top Rated By Company</div>
+            <div class="catalog-toggle">
+              <span>Enabled</span>
+              <label class="toggle-switch">
+                <input type="checkbox" class="catalog-checkbox" id="catalog-topRatedByCompany" title="Enable Top Rated By Company catalog">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="catalog-toggle">
+              <span>Discover only</span>
+              <label class="toggle-switch" title="Show in Discover only">
+                <input type="checkbox" class="catalog-discover-only" id="catalog-topRatedByCompany-discover" title="Show in Discover only" checked disabled>
                 <span class="slider"></span>
               </label>
             </div>
@@ -544,15 +589,15 @@
         
         // Sort languages by name or english_name
         const sortedLanguages = [...languages].sort((a, b) => {
-          const aName = a.name || a.english_name;
-          const bName = b.name || b.english_name;
+          const aName = a.english_name || a.name;
+          const bName = b.english_name || b.name;
           return aName.localeCompare(bName);
         });
         
         // Add options to select box
         sortedLanguages.forEach(lang => {
           if (lang.iso_639_1 && (lang.name || lang.english_name)) {
-            const displayName = lang.name ? `${lang.name} (${lang.english_name})` : lang.english_name;
+            const displayName = lang.name ? `${lang.english_name} (${lang.name})` : lang.english_name;
             const option = document.createElement('option');
             option.value = lang.iso_639_1;
             option.textContent = displayName;
@@ -593,7 +638,12 @@
           const catalogId = item.dataset.id;
           const discoverOnlyCheckbox = item.querySelector('.catalog-discover-only');
           if (discoverOnlyCheckbox) {
-            discoverOnly[catalogId] = discoverOnlyCheckbox.checked;
+            // Always set topRatedByCountry and topRatedByCompany to true (locked enabled)
+            if (catalogId === 'topRatedByCountry' || catalogId === 'topRatedByCompany') {
+              discoverOnly[catalogId] = true;
+            } else {
+              discoverOnly[catalogId] = discoverOnlyCheckbox.checked;
+            }
           }
         });
         
@@ -652,7 +702,13 @@
                 if (config.discoverOnly && config.discoverOnly[item.dataset.id] !== undefined) {
                   const discoverOnlyCheckbox = item.querySelector('.catalog-discover-only');
                   if (discoverOnlyCheckbox) {
-                    discoverOnlyCheckbox.checked = config.discoverOnly[item.dataset.id];
+                    // Keep topRatedByCountry and topRatedByCompany locked as enabled
+                    if (item.dataset.id === 'topRatedByCountry' || item.dataset.id === 'topRatedByCompany') {
+                      discoverOnlyCheckbox.checked = true;
+                      discoverOnlyCheckbox.disabled = true;
+                    } else {
+                      discoverOnlyCheckbox.checked = config.discoverOnly[item.dataset.id];
+                    }
                   }
                 }
                 
@@ -953,9 +1009,9 @@
             });
           }
           
-          // Add event listener for discover only toggle
+          // Add event listener for discover only toggle (skip disabled ones)
           const discoverOnlyCheckbox = item.querySelector('.catalog-discover-only');
-          if (discoverOnlyCheckbox) {
+          if (discoverOnlyCheckbox && !discoverOnlyCheckbox.disabled) {
             discoverOnlyCheckbox.addEventListener('change', updateUrlWithConfig);
           }
         });
