@@ -7,7 +7,8 @@
     "start": "node -r ./lib/logger server.js",
     "dev": "nodemon server.js --dev",
     "dev-buffer": "nodemon server.js --dev --buffer",
-    "format": "prettier --write \"**/*.{js,json,md}\""
+    "format": "prettier --write \"**/*.{js,json,md}\"",
+    "logs": "./test/BUlogs.ps1"
   },
   "repository": {
     "type": "git",
