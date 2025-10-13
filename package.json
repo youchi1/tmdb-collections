@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/youchi1/tmdb-collections#readme",
   "dependencies": {
-    "@keyv/sqlite": "^4.0.1",
+    "@keyv/sqlite": "^4.0.6",
     "@resolid/keyv-sqlite": "^5.0.1",
     "cache-manager": "^6.3.2",
     "cacheable": "^1.8.8",

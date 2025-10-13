@@ -13,6 +13,9 @@ lerna-debug.log*
 #tmp
 tmp/*
 
+#sqlite
+*.sqlite
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
