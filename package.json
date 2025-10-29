@@ -1,6 +1,6 @@
 {
   "name": "tmdb-collections",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Addon lets you explore TMDB Collections, which are essentially grouped movie series. Discover collections featuring newly released movies or browse catalogs of popular and top-rated collections. You can filter by genre or search collections by actor, director, writer, movie or collection name in any language.",
   "main": "server.js",
   "scripts": {

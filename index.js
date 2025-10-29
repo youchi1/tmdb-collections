@@ -26,8 +26,7 @@ addon.get("/:config?/configure", async function (req, res) {
 // Serve static files from Public directory
 addon.use(express.static(path.join(__dirname, "Public")));
 
-//first route for backward compatibility
-addon.get(["/manifest.json", "/:config/manifest.json"], async function (req, res) {
+addon.get("/:config/manifest.json", async function (req, res) {
   let config = parseConfig(req.params.config);
   const manifest = await getManifest(config);
   respond(res, manifest);
@@ -45,15 +44,13 @@ addon.param("type", async function (req, res, next, val) {
   }
 });
 
-//first route for backward compatibility
-addon.get(["/catalog/:type/:id/:extra?.json", "/:config/catalog/:type/:id/:extra?.json"], async function (req, res) {
+addon.get("/:config/catalog/:type/:id/:extra?.json", async function (req, res) {
   req.config = parseConfig(req.params.config);
   const response = await getCatalogResponse(req);
   respond(res, response);
 });
 
-//first route for backward compatibility
-addon.get(["/meta/:type/:id.json", "/:config/meta/:type/:id.json"], async function (req, res) {
+addon.get("/:config/meta/:type/:id.json", async function (req, res) {
   req.config = parseConfig(req.params.config);
   const response = await getMetaResponse(req);
   respond(res, response);
