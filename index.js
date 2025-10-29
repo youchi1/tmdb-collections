@@ -26,7 +26,7 @@ addon.get("/:config?/configure", async function (req, res) {
 // Serve static files from Public directory
 addon.use(express.static(path.join(__dirname, "Public")));
 
-addon.get("/:config/manifest.json", async function (req, res) {
+addon.get("/:config?/manifest.json", async function (req, res) {
   let config = parseConfig(req.params.config);
   const manifest = await getManifest(config);
   respond(res, manifest);
